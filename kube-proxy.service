@@ -5,12 +5,11 @@ Requires=setup-network-environment.service
 After=setup-network-environment.service
 
 [Service]
-EnvironmentFile=/etc/leader
 ExecStartPre=-/usr/bin/rm /opt/bin/kube-proxy
 ExecStartPre=/usr/bin/curl -L -o /opt/bin/kube-proxy -z /opt/bin/kube-proxy https://storage.googleapis.com/kubernetes-release/release/v1.0.7/bin/linux/amd64/kube-proxy
 ExecStartPre=/usr/bin/chmod +x /opt/bin/kube-proxy
 ExecStart=/opt/bin/kube-proxy \
-  --master=http://10.1.0.4:9090,http://10.1.0.5:9090,http://10.1.0.6:9090 \
+  --master=http://10.1.0.4:8080 \
   --logtostderr=true
 Restart=always
 RestartSec=10

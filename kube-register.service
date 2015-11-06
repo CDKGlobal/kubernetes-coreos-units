@@ -20,5 +20,6 @@ Restart=always
 RestartSec=10
 
 [X-Fleet]
+Global=true
 MachineOf=kube-apiserver.service
 
