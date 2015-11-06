@@ -14,5 +14,6 @@ Restart=always
 RestartSec=10
 
 [X-Fleet]
-MachineOf=kube-apiserver.service
+Global=true
+MachineMetadata=role=etcd
 
