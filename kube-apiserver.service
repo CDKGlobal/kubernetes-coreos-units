@@ -5,22 +5,22 @@ Requires=etcd2.service setup-network-environment.service
 After=etcd2.service setup-network-environment.service
 
 [Service]
-EnvironmentFile=/etc/network-environment
+EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/mkdir -p /opt/bin
 ExecStartPre=-/usr/bin/rm /opt/bin/kube-apiserver
-ExecStartPre=/usr/bin/curl -L -o /opt/bin/kube-apiserver -z /opt/bin/kube-apiserver https://storage.googleapis.com/kubernetes-release/release/v1.0.7/bin/linux/amd64/kube-apiserver
+ExecStartPre=/usr/bin/curl -L -o /opt/bin/kube-apiserver -z /opt/bin/kube-apiserver https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kube-apiserver
 ExecStartPre=/usr/bin/chmod +x /opt/bin/kube-apiserver
 ExecStart=/opt/bin/kube-apiserver \
   --allow_privileged=true \
+  --bind-address=${COREOS_PUBLIC_IPV4} \
+  --cloud-provider="" \
   --insecure_bind_address=0.0.0.0 \
-  --insecure_port=8080 \
+  --insecure_port=8000 \
   --kubelet_https=true \
-  --service-cluster-ip-range=172.22.0.0/16 \
-  --etcd_servers=http://127.0.0.1:4001 \
+  --service-cluster-ip-range=10.0.0.0/16 \
+  --etcd_servers=http://127.0.0.1:2379 \
   --logtostderr=true
+ExecStartPost=/usr/bin/etcdctl set /services/kube/master ${COREOS_PUBLIC_IPV4}
+ExecStopPost=/usr/bin/etcdctl rm /services/kube/master
 Restart=always
 RestartSec=10
-
-[X-Fleet]
-Global=true
-MachineMetadata=role=etcd

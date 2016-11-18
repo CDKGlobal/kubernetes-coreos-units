@@ -5,22 +5,21 @@ Requires=setup-network-environment.service
 After=setup-network-environment.service
 
 [Service]
-EnvironmentFile=/etc/network-environment
+EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/rm /opt/bin/kubelet
-ExecStartPre=/usr/bin/curl -L -o /opt/bin/kubelet -z /opt/bin/kubelet https://storage.googleapis.com/kubernetes-release/release/v1.0.7/bin/linux/amd64/kubelet
+ExecStartPre=/usr/bin/curl -L -o /opt/bin/kubelet -z /opt/bin/kubelet https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubelet
 ExecStartPre=/usr/bin/chmod +x /opt/bin/kubelet
-ExecStart=/opt/bin/kubelet \
+ExecStart=/bin/bash -cx "/opt/bin/kubelet \
   --address=0.0.0.0 \
   --port=10250 \
-  --hostname_override=${DEFAULT_IPV4} \
-  --api_servers=http://10.1.0.4:8080 \
+  --hostname_override=${COREOS_PUBLIC_IPV4} \
+  --api_servers=http://$(/usr/bin/etcdctl get /services/kube/master):8000 \
   --allow_privileged=true \
   --logtostderr=true \
   --healthz_bind_address=0.0.0.0 \
-  --healthz_port=10248
+  --healthz_port=10248"
 Restart=always
 RestartSec=10
 
 [X-Fleet]
-Global=true
-MachineMetadata=role=kubernetes-minion
+X-Conflicts=kube-apiserver.service

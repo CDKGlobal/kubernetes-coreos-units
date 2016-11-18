@@ -67,11 +67,6 @@ If you have no idea what [10.100/16 or 172.22/16 means, I wrote a quick post on 
 * Runs as a single instance with ```MachineOf=kube-apiserver.service```
 * Assumes kube-apiserver is running on the same node on port 9090
 
-## kube-scheduler
-
-* Runs the Scheduler service
-* Runs as a single instance with ```MachineOf=kube-apiserver.service```
-* Assumes kube-apiserver is running on the same node on port 9090
 
 ## kube-kubelet
 
